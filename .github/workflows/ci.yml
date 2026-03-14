@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Check, Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install vp (Vite+)
+        run: npm install -g vite-plus
+
+      - name: Install dependencies
+        run: vp install
+
+      - name: Check (format, lint, typecheck)
+        run: vp check
+
+      - name: Test
+        run: vp test
+
+      - name: Build
+        run: vp build
