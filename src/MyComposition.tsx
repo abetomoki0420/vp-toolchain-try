@@ -8,13 +8,13 @@ const seededRandom = (seed: number) => {
 
 type Particle = {
   id: number;
-  x: number;       // 0-100 (%)
-  y: number;       // 0-100 (%)
+  x: number; // 0-100 (%)
+  y: number; // 0-100 (%)
   size: number;
   speed: number;
   hue: number;
-  phase: number;   // 点滅の位相オフセット
-  delay: number;   // 出現フレームの遅延
+  phase: number; // 点滅の位相オフセット
+  delay: number; // 出現フレームの遅延
 };
 
 const PARTICLE_COUNT = 80;
@@ -52,7 +52,15 @@ const sparkles: Sparkle[] = Array.from({ length: SPARKLE_COUNT }, (_, i) => ({
   delay: seededRandom(i * 43) * 60,
 }));
 
-const SparkleShape = ({ size, color, rotation }: { size: number; color: string; rotation: number }) => (
+const SparkleShape = ({
+  size,
+  color,
+  rotation,
+}: {
+  size: number;
+  color: string;
+  rotation: number;
+}) => (
   <svg
     width={size}
     height={size}
@@ -62,7 +70,8 @@ const SparkleShape = ({ size, color, rotation }: { size: number; color: string; 
     {[0, 45, 90, 135].map((angle) => (
       <line
         key={angle}
-        x1="0" y1="0"
+        x1="0"
+        y1="0"
         x2={Math.cos((angle * Math.PI) / 180) * 0.9}
         y2={Math.sin((angle * Math.PI) / 180) * 0.9}
         stroke={color}
@@ -82,11 +91,7 @@ export const MyComposition = () => {
   const hue = interpolate(frame, [0, 90], [270, 360]);
 
   // テキストの輝きパルス
-  const glowIntensity = interpolate(
-    Math.sin((frame / 20) * Math.PI * 2),
-    [-1, 1],
-    [10, 30],
-  );
+  const glowIntensity = interpolate(Math.sin((frame / 20) * Math.PI * 2), [-1, 1], [10, 30]);
 
   return (
     <AbsoluteFill
@@ -105,7 +110,9 @@ export const MyComposition = () => {
         if (!appeared) return null;
         const localFrame = frame - p.delay;
         const twinkle = (Math.sin(localFrame * p.speed + p.phase) + 1) / 2;
-        const particleOpacity = interpolate(localFrame, [0, 10], [0, 1], { extrapolateRight: "clamp" }) * (0.3 + twinkle * 0.7);
+        const particleOpacity =
+          interpolate(localFrame, [0, 10], [0, 1], { extrapolateRight: "clamp" }) *
+          (0.3 + twinkle * 0.7);
         const floatY = Math.sin(localFrame * p.speed * 0.5 + p.phase) * 4;
 
         return (
@@ -133,7 +140,9 @@ export const MyComposition = () => {
         if (!appeared) return null;
         const localFrame = frame - s.delay;
         const twinkle = (Math.sin(localFrame * 0.15 + s.id) + 1) / 2;
-        const sparkleOpacity = interpolate(localFrame, [0, 15], [0, 1], { extrapolateRight: "clamp" }) * (0.4 + twinkle * 0.6);
+        const sparkleOpacity =
+          interpolate(localFrame, [0, 15], [0, 1], { extrapolateRight: "clamp" }) *
+          (0.4 + twinkle * 0.6);
         const rotation = localFrame * s.rotationSpeed;
 
         return (
@@ -148,11 +157,7 @@ export const MyComposition = () => {
               filter: `drop-shadow(0 0 ${s.size * 0.4}px hsl(${s.hue}, 100%, 80%))`,
             }}
           >
-            <SparkleShape
-              size={s.size}
-              color={`hsl(${s.hue}, 100%, 85%)`}
-              rotation={rotation}
-            />
+            <SparkleShape size={s.size} color={`hsl(${s.hue}, 100%, 85%)`} rotation={rotation} />
           </div>
         );
       })}
